@@ -22,14 +22,22 @@ class VideoCall extends Component{
     this.endMeeting = this.endMeeting.bind(this);
     this.muteCall = this.muteCall.bind(this);
     this.selectAudioDevices = this.selectAudioDevices.bind(this);
+    this.selectVideoDevice = this.selectVideoDevice.bind(this);
+    this.startVideo = this.startVideo.bind(this);
+    this.stopVideo = this.stopVideo.bind(this);
+    this.seeVideo = this.seeVideo.bind(this);
+    this.toggleVideo = this.toggleVideo.bind(this);
     this.audioRef = React.createRef();
     this.meetingSession="";
+    this.videoOn="false";
   }
 
+  //Run when component opens up/is mounted
   componentWillMount(){
     console.log('HHH')
   }
 
+  //Send API calls to create/join meeting
   joinMeeting()
   {
     if(window.location.pathname==="/doctor")
@@ -46,12 +54,12 @@ class VideoCall extends Component{
     });
   }
   
+  //Create Meeting Session from meeting and attendee info received from API
   async createMeetingSession(result)
   {
     const logger = new ConsoleLogger('MyLogger', LogLevel.INFO);
     const deviceController = new DefaultDeviceController(logger);
     
-    // You need responses from server-side Chime API. See below for details.
     const meetingResponse = result.JoinInfo.Meeting;
     const attendeeResponse = result.JoinInfo.Attendee;
     const configuration = new MeetingSessionConfiguration(meetingResponse, attendeeResponse);
@@ -62,13 +70,13 @@ class VideoCall extends Component{
       deviceController
     );
 
-    this.selectAudioDevices();
     this.addAudioVideoChangeObserver();
     this.addAudioStartObserver();
     this.addVideoStartObserver();
     this.startVideo();
   }
 
+  //Select Local Audio Devices
   async selectAudioDevices()
   {
     const audioInputDevices = await this.meetingSession.audioVideo.listAudioInputDevices();
@@ -81,6 +89,7 @@ class VideoCall extends Component{
     console.log('DDone');
   }
 
+  //Observer to change audio/video when input changes
   addAudioVideoChangeObserver()
   {
     const audioVideoChangeObserver = {
@@ -100,6 +109,7 @@ class VideoCall extends Component{
     this.meetingSession.audioVideo.addDeviceChangeObserver(audioVideoChangeObserver);
   }
 
+  //Observer when audio starts
   addAudioStartObserver()
   {
     const audioElement = document.getElementById('audioElement');
@@ -109,14 +119,15 @@ class VideoCall extends Component{
     const addAudioStartObserver = {
       audioVideoDidStart: () => {
         console.log('Audio Started');
+        this.selectAudioDevices();
+        this.selectVideoDevice();
       }
     };
 
     this.meetingSession.audioVideo.addObserver(addAudioStartObserver);
-
-    this.meetingSession.audioVideo.start();
   }
 
+  //Observer when video starts
   addVideoStartObserver()
   {
     const addVideoStartObserver = {
@@ -138,17 +149,20 @@ class VideoCall extends Component{
     this.meetingSession.audioVideo.addObserver(addVideoStartObserver);
   }
 
+  //Stops Video and calls API to end meeting
   endMeeting()
   {
+    this.stopVideo();
     fetch('/doctor/meeting/Prod/end?title="test2"').then(res=>res.json()).then((result)=>{
       console.log(result);
       console.log("End done");
     })
   }
 
-  muteCall()
+  //Mute/unmute call
+  async muteCall()
   {
-    const muted = this.meetingSession.audioVideo.realtimeIsLocalAudioMuted();
+    const muted = await this.meetingSession.audioVideo.realtimeIsLocalAudioMuted();
     if (muted) {
       const unmuted = this.meetingSession.audioVideo.realtimeUnmuteLocalAudio();
       if (unmuted) {
@@ -157,21 +171,24 @@ class VideoCall extends Component{
         console.log('You cannot unmute yourself');
       }
     } else {
-      this.meetingSession.audioVideo.realtimeMuteLocalAudio();
+      await this.meetingSession.audioVideo.realtimeMuteLocalAudio();
       console.log('Muted');
     }
   }
 
+  //Select Video Device
+  async selectVideoDevice()
+  {
+    const videoInputDevices = await this.meetingSession.audioVideo.listVideoInputDevices();
+    await this.meetingSession.audioVideo.chooseVideoInputDevice(videoInputDevices[0].deviceId);
+  }
+
+  //Start Sharing video 
   async startVideo()
   {
     const videoElement = document.getElementById('ownVideo');
 
-    // Make sure you have chosen your camera. In this use case, you will choose the first device.
-    const videoInputDevices = await this.meetingSession.audioVideo.listVideoInputDevices();
-
-    // The camera LED light will turn on indicating that it is now capturing.
-    // See the "Device" section for details.
-    await this.meetingSession.audioVideo.chooseVideoInputDevice(videoInputDevices[0].deviceId);
+    this.selectVideoDevice();
 
     const observer = {
       // videoTileDidUpdate is called whenever a new tile is created or tileState changes.
@@ -180,6 +197,12 @@ class VideoCall extends Component{
         if (!tileState.boundAttendeeId || !tileState.localTile) {
           return;
         }
+        this.selectVideoDevice();
+
+        if(tileState.active==="true")
+          this.videoOn="true";
+        else if(tileState.active==="false")
+          this.videoOn="false";
 
         this.meetingSession.audioVideo.bindVideoElement(tileState.tileId, videoElement);
       }
@@ -187,12 +210,83 @@ class VideoCall extends Component{
 
     this.meetingSession.audioVideo.addObserver(observer);
 
+    this.meetingSession.audioVideo.start();
+
     this.meetingSession.audioVideo.startLocalVideoTile();
+
+    this.seeVideo();
   }
-  
+
+  //Stop Sharing Video
+  async stopVideo()
+  {
+    const videoElement = document.getElementById('ownVideo');
+
+    let localTileId = null;
+    const observer = {
+      videoTileDidUpdate: tileState => {
+        // Ignore a tile without attendee ID and other attendee's tile.
+        if (!tileState.boundAttendeeId || !tileState.localTile) {
+          return;
+        }
+
+        if(tileState.active==="true")
+          this.videoOn="true";
+        else if(tileState.active==="false")
+          this.videoOn="false";
+          
+        // videoTileDidUpdate is also invoked when you call startLocalVideoTile or tileState changes.
+        console.log(`If you called stopLocalVideoTile, ${tileState.active} is false.`);
+        this.meetingSession.audioVideo.bindVideoElement(tileState.tileId, videoElement);
+        localTileId = tileState.tileId;
+      },
+      videoTileWasRemoved: tileId => {
+        if (localTileId === tileId) {
+          console.log(`You called removeLocalVideoTile. videoElement can be bound to another tile.`);
+          localTileId = null;
+        }
+      }
+    };
+
+    this.meetingSession.audioVideo.addObserver(observer);
+
+    this.meetingSession.audioVideo.stopLocalVideoTile();
+    console.log('video stopped');
+  }
+
+  //See other attendees video
   async seeVideo()
   {
-    const videoElement = document.getElementById('viewVideo');
+    const videoElements = [document.getElementById('viewVideo')];
+
+    // index-tileId pairs
+    const indexMap = {};
+
+    const acquireVideoElement = tileId => {
+      // Return the same video element if already bound.
+      for (let i = 0; i < 16; i += 1) {
+        if (indexMap[i] === tileId) {
+          return videoElements[i];
+        }
+      }
+      // Return the next available video element.
+      for (let i = 0; i < 16; i += 1) {
+        if (!indexMap.hasOwnProperty(i)) {
+          indexMap[i] = tileId;
+          return videoElements[i];
+        }
+      }
+      throw new Error('no video element is available');
+    };
+
+    const releaseVideoElement = tileId => {
+      for (let i = 0; i < 16; i += 1) {
+        if (indexMap[i] === tileId) {
+          delete indexMap[i];
+          return;
+        }
+      }
+    };
 
     const observer = {
       // videoTileDidUpdate is called whenever a new tile is created or tileState changes.
@@ -202,11 +296,25 @@ class VideoCall extends Component{
           return;
         }
 
-        this.meetingSession.audioVideo.bindVideoElement(tileState.tileId, videoElement);
+        this.meetingSession.audioVideo.bindVideoElement(
+          tileState.tileId,
+          acquireVideoElement(tileState.tileId)
+        );
+      },
+      videoTileWasRemoved: tileId => {
+        releaseVideoElement(tileId);
       }
     };
 
     this.meetingSession.audioVideo.addObserver(observer);
+  }
+
+  toggleVideo()
+  {
+    if(this.videoOn==="true")
+      this.stopVideo();
+    else if(this.videoOn==="false")
+      this.startVideo();
   }
 
   render(){
@@ -223,6 +331,7 @@ class VideoCall extends Component{
         <audio id="audioElement" style={{display:"none"}} ref={this.audioRef}></audio>
         <div>
           <button class="muteCallIcon" onClick={this.muteCall}>mute</button>
+          <button class="videoIcon" onClick={this.toggleVideo}>video</button>
           <button class="endMeetingIcon" onClick={this.endMeeting}>end</button>
         </div>
       </div>

@@ -47,10 +47,16 @@
     left:10px;
     bottom:10px;
 }
+.videoIcon{
+    position: absolute;
+    left:30px;
+    bottom:10px;
+}
 
 .viewVideo{
-    position: relative;
-    width: 100%;
+    position: absolute;
+    left: 0px;
+    height: 100%;
 }
 
 .ownVideo{
