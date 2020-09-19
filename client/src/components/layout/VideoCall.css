@@ -1,0 +1,63 @@
+
+.videoCallBack{
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 94px);
+    top: 94px;
+    left: 0px;
+    background-color: #4f4f4f;
+}
+
+.ringing{
+    width:200px;
+    height:200px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -100px;
+}
+
+.ringingIcon{
+    width: 124px;
+    height: 126px;
+}
+
+.ringingText{
+    text-align: center;
+    font: 100;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: bold;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    margin-top: 5px;
+}
+
+.endMeetingIcon{
+    position: absolute;
+    right:10px;
+    bottom:10px;
+}
+
+.muteCallIcon{
+    position: absolute;
+    left:10px;
+    bottom:10px;
+}
+
+.viewVideo{
+    position: relative;
+    width: 100%;
+}
+
+.ownVideo{
+    position: absolute;
+    width: 209px;
+    height: 118px;
+    left: 41px;
+    top: 715px;
+    z-index: 2;
+}
