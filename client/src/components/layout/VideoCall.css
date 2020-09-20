@@ -6,19 +6,20 @@
     top: 94px;
     left: 0px;
     background-color: #4f4f4f;
+    overflow: hidden;
 }
 
-.ringing{
-    width:200px;
+.middlepopup{
+    width:250px;
     height:200px;
     position: fixed;
-    top: 50%;
+    top: 45%;
     left: 50%;
     margin-top: -100px;
-    margin-left: -100px;
+    margin-left: -125px;
 }
 
-.ringingIcon{
+.popupImageIcon{
     width: 124px;
     height: 126px;
 }
@@ -36,34 +37,53 @@
     margin-top: 5px;
 }
 
-.endMeetingIcon{
+.videoOptions > img{
     position: absolute;
-    right:10px;
-    bottom:10px;
+    bottom: 25px;
+    width: 55px;
+    height: 55px;
 }
 
-.muteCallIcon{
+.videoOptions>img:hover{
     position: absolute;
-    left:10px;
-    bottom:10px;
-}
-.videoIcon{
-    position: absolute;
-    left:30px;
-    bottom:10px;
+    bottom: 25px;
+    cursor: pointer;
 }
 
 .viewVideo{
     position: absolute;
     left: 0px;
-    height: 100%;
+    width: 100%;
 }
 
 .ownVideo{
     position: absolute;
     width: 209px;
     height: 118px;
-    left: 41px;
-    top: 715px;
+    left: 30px;
+    bottom:100px;
     z-index: 2;
+}
+
+.popupText{
+    font-family: Lato;
+    font-style: normal;
+    font-size: 17px;
+    line-height: 23px;
+    text-align: center;
+    letter-spacing: 0.02em;
+    margin-bottom: 5px;
+    color: #FFFFFF;
+}
+
+#exit:hover{
+    opacity: 0.6;
+}
+
+#messageLogo:hover{
+    opacity: 0.6;
+}
+
+#messageUnreadLogo:hover{
+    opacity: 0.6;
 }

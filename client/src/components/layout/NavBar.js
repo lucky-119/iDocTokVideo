@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import profilePic from '../../img/profilePic.jpg';
-import doctoklogo from '../../img/chromevaala.png';
+import doctoklogo from '../../img/chromevaala.svg';
 import "./NavBar.css"
 
 class NavBar extends Component{
