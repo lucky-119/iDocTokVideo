@@ -11,12 +11,14 @@ import shareScreenOffLogo from '../../img/sharescreenoff.svg';
 import shareScreenOnLogo from '../../img/sharescreenon.svg';
 import messageLogo from '../../img/message.svg';
 import messageUnreadLogo from '../../img/messageunread.svg';
+import callEndedLogo from '../../img/callended.svg'
 import {
   ConsoleLogger,
   DefaultDeviceController,
   DefaultMeetingSession,
   LogLevel,
-  MeetingSessionConfiguration
+  MeetingSessionConfiguration,
+  MeetingSessionStatusCode
 } from 'amazon-chime-sdk-js';
 
 class VideoCall extends Component{
@@ -40,15 +42,19 @@ class VideoCall extends Component{
     this.removeRinging = this.removeRinging.bind(this);
     this.showAudioCall = this.showAudioCall.bind(this);
     this.removeAudioCall = this.removeAudioCall.bind(this);
+    this.enableIcons = this.enableIcons.bind(this);
+    this.disableIcons = this.disableIcons.bind(this);
+    this.videoObserver = this.videoObserver.bind(this);
     this.audioRef = React.createRef();
     this.meetingSession="";
     this.videoOn=false;
-    this.attendee=""
+    this.attendee="";
+    this.startTime="00";
+    this.endTime="00";
   }
 
   //Run when component opens up/is mounted
   componentWillMount(){
-    console.log('HHH')
     if(window.location.pathname==="/doctor")
       this.attendee="patient";
     else if(window.location.pathname==="/patient")
@@ -91,7 +97,9 @@ class VideoCall extends Component{
     this.addAudioVideoChangeObserver();
     this.addAudioStartObserver();
     this.addVideoStartObserver();
-    this.startVideo();
+    this.enableIcons();
+    this.videoObserver();
+    this.attendeePresentObserver();
   }
 
   //Select Local Audio Devices
@@ -100,8 +108,6 @@ class VideoCall extends Component{
     const audioInputDevices = await this.meetingSession.audioVideo.listAudioInputDevices();
     const audioOutputDevices = await this.meetingSession.audioVideo.listAudioOutputDevices();
 
-    console.log(audioInputDevices[0]);
-    console.log(audioOutputDevices[0]);
     await this.meetingSession.audioVideo.chooseAudioInputDevice(audioInputDevices[0].deviceId);
     await this.meetingSession.audioVideo.chooseAudioOutputDevice(audioOutputDevices[0].deviceId);
     console.log('DDone');
@@ -161,13 +167,16 @@ class VideoCall extends Component{
     document.getElementById("audiocall").style.display = "none";
   }
 
+  enableCallEnded()
+  {
+    document.getElementById("callEnded").style.display = "block";
+  }
   //Observer when video starts
   addVideoStartObserver()
   {
     const addVideoStartObserver = {
       videoDidStart: () => {
         console.log('Video Started');
-        this.selectVideoDevice();
       },
       audioVideoDidStop: sessionStatus => {
         // See the "Stopping a session" section for details.
@@ -186,10 +195,52 @@ class VideoCall extends Component{
     this.seeVideo();
   }
 
-  //Stops Video and calls API to end meeting
-  endMeeting()
+  endMeetingObserver()
   {
-    this.stopVideo();
+    const observer = {
+      audioVideoDidStop: sessionStatus => {
+        const sessionStatusCode = sessionStatus.statusCode();
+        if (sessionStatusCode === MeetingSessionStatusCode.Left) {
+          /*
+            - You called meetingSession.audioVideo.stop().
+            - When closing a browser window or page, Chime SDK attempts to leave the session.
+          */
+          console.log('You left the session');
+        } else {
+          console.log('Stopped with a session status code: ', sessionStatusCode);
+        }
+        this.disableIcons();
+        this.removeAudioCall();
+        this.removeRinging();
+        var d=new Date();
+        this.endTime=d.getTime();
+        console.log('Start Time'+this.endTime);
+        this.enableCallEnded();
+        this.showTime();
+      }
+    };
+    
+    this.meetingSession.audioVideo.addObserver(observer);
+    
+    this.meetingSession.audioVideo.stop();
+  }
+
+  showTime()
+  {
+    var time=this.endTime-this.startTime;
+    var min=Math.floor(time/60000);
+    if(min<10)
+      min="0"+min.toString();
+    var sec=Math.round(time/1000)-min;
+    if(sec<10)
+      sec="0"+sec.toString();
+    document.getElementById('time').innerHTML=min+":"+sec;
+  }
+  //Stops Video and calls API to end meeting
+  async endMeeting()
+  {
+    this.endMeetingObserver();
+    await this.meetingSession.audioVideo.chooseVideoInputDevice(null);
     fetch('/doctor/meeting/Prod/end?title="test2"').then(res=>res.json()).then((result)=>{
       console.log(result);
       console.log("End done");
@@ -224,13 +275,9 @@ class VideoCall extends Component{
     await this.meetingSession.audioVideo.chooseVideoInputDevice(videoInputDevices[0].deviceId);
   }
 
-  //Start Sharing video 
-  async startVideo()
+  async videoObserver()
   {
     const videoElement = document.getElementById('ownVideo');
-
-    this.selectVideoDevice();
-
     const observer = {
       // videoTileDidUpdate is called whenever a new tile is created or tileState changes.
       videoTileDidUpdate: tileState => {
@@ -238,7 +285,6 @@ class VideoCall extends Component{
         if (!tileState.boundAttendeeId || !tileState.localTile) {
           return;
         }
-        this.selectVideoDevice();
 
         console.log('titlestate');
         console.log(tileState.active);
@@ -248,41 +294,17 @@ class VideoCall extends Component{
     };
 
     this.meetingSession.audioVideo.addObserver(observer);
-
+  } 
+  //Start Sharing video 
+  async startVideo()
+  {
+    this.selectVideoDevice();
     this.meetingSession.audioVideo.startLocalVideoTile();
   }
 
   //Stop Sharing Video
   async stopVideo()
   {
-    const videoElement = document.getElementById('ownVideo');
-
-    let localTileId = null;
-    const observer = {
-      videoTileDidUpdate: tileState => {
-        // Ignore a tile without attendee ID and other attendee's tile.
-        if (!tileState.boundAttendeeId || !tileState.localTile) {
-          return;
-        }
-
-        console.log('titlestate');
-        console.log(tileState.active);
-        this.videoOn=tileState.active;
-        // videoTileDidUpdate is also invoked when you call startLocalVideoTile or tileState changes.
-        console.log(`If you called stopLocalVideoTile, ${tileState.active} is false.`);
-        this.meetingSession.audioVideo.bindVideoElement(tileState.tileId, videoElement);
-        localTileId = tileState.tileId;
-      },
-      videoTileWasRemoved: tileId => {
-        if (localTileId === tileId) {
-          console.log(`You called removeLocalVideoTile. videoElement can be bound to another tile.`);
-          localTileId = null;
-        }
-      }
-    };
-
-    this.meetingSession.audioVideo.addObserver(observer);
-
     this.meetingSession.audioVideo.stopLocalVideoTile();
     console.log('video stopped');
   }
@@ -358,7 +380,42 @@ class VideoCall extends Component{
       document.getElementById('videoOff').style.display="none";
       document.getElementById('videoOn').style.display="block";
       this.startVideo();
+      this.startVideo();
     }
+  }
+
+  enableIcons()
+  {
+    document.getElementById('videoOptions').style.display="block";
+  }
+
+  disableIcons()
+  {
+    document.getElementById('videoOptions').style.display="none";
+  }
+
+  attendeePresentObserver()
+  {
+    const attendeePresenceSet = new Set();
+    const callback = (presentAttendeeId, present) => {
+      console.log(`Attendee ID: ${presentAttendeeId} Present: ${present}`);
+      if (present) {
+        attendeePresenceSet.add(presentAttendeeId);
+        if(attendeePresenceSet.size===2)
+        {
+          this.removeRinging();
+          this.showAudioCall();
+          var d=new Date();
+          this.startTime=d.getTime();
+          console.log('Start Time'+this.startTime);
+        }
+      } else {
+        attendeePresenceSet.delete(presentAttendeeId);
+        this.endMeetingObserver();
+      }
+    };
+
+    this.meetingSession.audioVideo.realtimeSubscribeToAttendeeIdPresence(callback);
   }
 
   render(){
@@ -373,23 +430,31 @@ class VideoCall extends Component{
           </div>
           <p class="ringingText">Ringing...</p>
         </div>
-        <div id="audiocall" class="middlepopup" style={{top:"50%", display:"none"}}>
+        <div id="audiocall" class="middlepopup"  style={{top:"50%", display:"none"}}>
           <div style={{textAlign:"center"}}>
             <img class="popupImageIcon" alt="audioCallIcon" src={audioCallLogo}></img>
           </div>
           <p class="popupText">Audio Call In Progress</p>
         </div>
+        <div id="callEnded" class="callendpopup" style={{display:"none"}}>
+          <p class="ringingText">CALL OVERVIEW</p>
+          <p id="time" class="time">00:00</p>
+          <p class="ringingText">CALL ENDED</p><br></br>
+          <div style={{textAlign:"center"}}>
+            <img class="callEndedImageIcon" alt="callended" src={callEndedLogo}></img>
+          </div>
+        </div>
         <audio id="audioElement" style={{display:"none"}} ref={this.audioRef}></audio>
-        <div class="videoOptions">
+        <div id="videoOptions" class="videoOptions">
           <img id="audioOn" style={{left:"25px"}} alt="muteCallIcon" src={audioOnLogo} onClick={this.muteCall}></img>
           <img id="audioOff" style={{left:"25px", display:"none"}} alt="muteCallIcon" src={audioOffLogo} onClick={this.muteCall}></img>
-          <img id="videoOff" style={{left:"90px", display:"none"}} alt="videoIcon" src={videoCallOffLogo} onClick={this.toggleVideo}></img>
-          <img id="videoOn" style={{left:"90px"}} alt="videoIcon" src={videoCallOnLogo} onClick={this.toggleVideo}></img>
-          <img id="screenshareoff" style={{left:"155px"}} alt="videoIcon" src={shareScreenOffLogo}></img>
-          <img id="screenshareon" style={{left:"155px", display:"none"}} alt="videoIcon" src={shareScreenOnLogo}></img>
+          <img id="videoOff" style={{left:"90px"}} alt="videoIcon" src={videoCallOffLogo} onClick={this.toggleVideo}></img>
+          <img id="videoOn" style={{left:"90px", display:"none"}} alt="videoIcon" src={videoCallOnLogo} onClick={this.toggleVideo}></img>
+          <img id="screenShareOff" style={{left:"155px"}} alt="videoIcon" src={shareScreenOffLogo}></img>
+          <img id="screenShareOn" style={{left:"155px", display:"none"}} alt="videoIcon" src={shareScreenOnLogo}></img>
           <img id="messageLogo" style={{left:"220px"}} alt="messageIcon" src={messageLogo}></img>
           <img id="messageUnreadLogo" style={{left:"220px", display:"none"}} alt="messageIcon" src={messageUnreadLogo}></img>
-          <img id="exit" style={{right:"25px"}} alt="endMeetingIcon" src={endMeetingLogo} onClick={this.endMeeting}></img>
+          <img id="exit" style={{right:"25px"}} alt="endMeetingIcon" src={endMeetingLogo} onClick={this.endMeeting} disabled></img>
         </div>
       </div>
     );
