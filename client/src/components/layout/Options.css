@@ -1,0 +1,217 @@
+.leftMenu{
+    position: absolute;
+    width: 306px;
+    left: 15px;
+    top: 15px;
+}
+
+.rightMenu{
+    position: absolute;
+    width: 306px;
+    right: 0px;
+    top: 15px;
+}
+
+.whiteMenu{
+    position: relative;
+    height: 86px;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    box-shadow: 0px 4.4301px 4.4301px rgba(0, 0, 0, 0.25);
+    border-radius: 11px;
+    margin-bottom: 10px;
+    padding: 0px;
+}
+
+.whiteMenuOpen{
+    position: relative;
+    height: 500px;
+    left: 0px;
+    top: 0px;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    box-shadow: 0px 4.4301px 4.4301px rgba(0, 0, 0, 0.25);
+    border-radius: 11.0753px;
+}
+
+.orangeMenu{
+    position: relative;
+    height: 86px;
+    background: #FFB259;
+    box-sizing: border-box;
+    box-shadow: 0px 4.4301px 4.4301px rgba(0, 0, 0, 0.25);
+    border-radius: 11px;
+    margin-bottom: 10px;
+}
+
+.orangeMenuSmall{
+    position: relative;
+    height: 40px;
+    background: #FFB259;
+    box-sizing: border-box;
+    box-shadow: 0px 4.4301px 4.4301px rgba(0, 0, 0, 0.25);
+    border-radius: 11.0753px;
+    margin-bottom: 10px;
+}
+
+.rightMenu > .whiteMenu{
+    border-radius: 11px 0px 0px 11px;
+}
+
+.rightMenu > .orangeMenu{
+    border-radius: 11px 0px 0px 11px;
+}
+
+.centerHeading{
+    position: relative;
+    left: 50%;
+    top: 50%;
+    width: 70%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.leftMenu > .whiteMenu > .centerHeading{
+    position: relative;
+    top: 50%;
+    width: 70%;
+}
+
+.whiteMenuOpen > .centerHeading{
+    position: relative;
+    left: 50%;
+    top: 33px;
+    width: 70%;
+    transform: translateX(-50%);
+}
+
+.menuHeading{
+    text-align: center;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    margin: auto;
+}
+
+.whiteMenu > .centerHeading > .menuHeading{
+    font-size: 16px;
+    text-transform: uppercase;
+    color: #486581;
+}
+
+.whiteMenuOpen > .centerHeading > .menuHeading{
+    top: 20%;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: #486581;
+}
+
+.orangeMenu > .centerHeading > .menuHeading{
+    font-size: 15px;
+    color: #1E1C61;
+}
+
+.orangeMenuSmall > .centerHeading > .menuHeading{
+    font-size: 15px;
+    color: #1E1C61;
+}
+
+.menuOptional{
+    text-align: center;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: #FFFFFF;
+    margin: auto;
+    padding-top: 5px;
+}
+
+.downLeftIcon{
+    position: absolute;
+    right: 6.25px;
+    top: 28px;
+}
+
+.downRightIcon{
+    position: absolute;
+    left: 6.25px;
+    top: 28px;
+    transform: rotateZ(90deg);
+}
+
+.menuBack{
+    position: relative;
+    left: 0px;
+    top: 0px;
+
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 22px;
+    letter-spacing: 0.02em;
+    text-decoration-line: underline;
+
+    color: #FFFFFF;
+}
+
+.orangeMenu:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.orangeMenuSmall:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.whiteMenu:hover{
+    cursor: pointer;    
+    opacity: 0.8;
+}
+
+.openDetailsContainer{
+    position: relative;
+}
+
+.line{
+    position: relative;
+    width: 2px;
+    height: 244px;
+    left: 0px;
+    top: 0px;
+
+    background: #C4C4C4;
+    transform: rotate(-90deg);
+}
+
+.detailTopic{
+    font-family: Lato;
+    font-style: normal;
+    letter-spacing: 0.02em;
+    padding: 0px 0px 0px 20px;
+    border-top: 2px solid #C4C4C4;
+    margin: 20px;
+}
+
+.detailHeading{
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+
+    color: #486581;
+}
+
+.detailValue{
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+}

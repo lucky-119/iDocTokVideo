@@ -12,7 +12,7 @@
   "author": "lakshay",
   "license": "ISC",
   "dependencies": {
-    "amazon-chime-sdk-js": "^1.17.2",
+    "amazon-chime-sdk-js": "^1.18.0",
     "aws-sdk": "^2.751.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.1",

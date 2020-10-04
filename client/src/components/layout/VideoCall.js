@@ -11,7 +11,9 @@ import shareScreenOffLogo from '../../img/sharescreenoff.svg';
 import shareScreenOnLogo from '../../img/sharescreenon.svg';
 import messageLogo from '../../img/message.svg';
 import messageUnreadLogo from '../../img/messageunread.svg';
-import callEndedLogo from '../../img/callended.svg'
+import callEndedLogo from '../../img/callended.svg';
+import sendMessageLogo from '../../img/sendMessage.svg';
+import Options from './Options';
 import {
   ConsoleLogger,
   DefaultDeviceController,
@@ -45,12 +47,17 @@ class VideoCall extends Component{
     this.enableIcons = this.enableIcons.bind(this);
     this.disableIcons = this.disableIcons.bind(this);
     this.videoObserver = this.videoObserver.bind(this);
+    this.toggleChat = this.toggleChat.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
+    this.receiveMessageObserver = this.receiveMessageObserver.bind(this);
     this.audioRef = React.createRef();
     this.meetingSession="";
     this.videoOn=false;
     this.attendee="";
     this.startTime="00";
     this.endTime="00";
+    this.currentSendMessageId=0;
+    this.currentReceiveMessageId=0;
   }
 
   //Run when component opens up/is mounted
@@ -100,6 +107,7 @@ class VideoCall extends Component{
     this.enableIcons();
     this.videoObserver();
     this.attendeePresentObserver();
+    this.receiveMessageObserver();
   }
 
   //Select Local Audio Devices
@@ -200,23 +208,26 @@ class VideoCall extends Component{
     const observer = {
       audioVideoDidStop: sessionStatus => {
         const sessionStatusCode = sessionStatus.statusCode();
-        if (sessionStatusCode === MeetingSessionStatusCode.Left) {
+        if (sessionStatusCode === MeetingSessionStatusCode.Left || sessionStatusCode === MeetingSessionStatusCode.AudioCallEnded) {
           /*
             - You called meetingSession.audioVideo.stop().
             - When closing a browser window or page, Chime SDK attempts to leave the session.
           */
+          this.disableIcons();
+          this.removeAudioCall();
+          this.removeRinging();
+          var d=new Date();
+          this.endTime=d.getTime();
+          console.log('Start Time'+this.endTime);
+          if(document.getElementById('chatbox').style.display==="block")
+            this.toggleChat();
+          this.enableCallEnded();
+          this.showTime();
           console.log('You left the session');
         } else {
           console.log('Stopped with a session status code: ', sessionStatusCode);
         }
-        this.disableIcons();
-        this.removeAudioCall();
-        this.removeRinging();
-        var d=new Date();
-        this.endTime=d.getTime();
-        console.log('Start Time'+this.endTime);
-        this.enableCallEnded();
-        this.showTime();
+        
       }
     };
     
@@ -231,7 +242,7 @@ class VideoCall extends Component{
     var min=Math.floor(time/60000);
     if(min<10)
       min="0"+min.toString();
-    var sec=Math.round(time/1000)-min;
+    var sec=Math.round(time/1000)-(min*60);
     if(sec<10)
       sec="0"+sec.toString();
     document.getElementById('time').innerHTML=min+":"+sec;
@@ -387,6 +398,9 @@ class VideoCall extends Component{
   enableIcons()
   {
     document.getElementById('videoOptions').style.display="block";
+    var d=new Date();
+    this.startTime=d.getTime();
+    console.log('Start Time'+this.startTime);
   }
 
   disableIcons()
@@ -418,44 +432,119 @@ class VideoCall extends Component{
     this.meetingSession.audioVideo.realtimeSubscribeToAttendeeIdPresence(callback);
   }
 
+  toggleChat()
+  {
+    if(document.getElementById('chatbox').style.display==="none")
+    {
+      document.getElementById('chatbox').style.display="block";
+      document.getElementById('messageLogo').style.display="block";
+      document.getElementById('messageUnreadLogo').style.display="none";
+    }
+    else
+    {
+      document.getElementById('chatbox').style.display="none";
+    }
+  }
+
+  sendMessage()
+  {
+    var message=document.getElementById('chatMessage').value;
+    if(message!=="")
+    {
+      var html='<div id="messageSend'+this.currentSendMessageId+'" class="messageContainer"><div class="messageBoxSend"><p>'+message+'</p></div></div>';
+      document.getElementById('allMessages').innerHTML+=html;
+      document.getElementById('chatMessage').value="";
+      document.getElementById('messageSend'+this.currentSendMessageId).scrollIntoView();
+      this.currentSendMessageId+=1;
+      this.meetingSession.audioVideo.realtimeSendDataMessage("topic",message);
+    }
+  }
+
+  receiveMessageObserver()
+  {
+    const callback = (datamessage) => {
+      console.log('MESSAGE RECEIVED');
+      var message=String.fromCharCode.apply(null, datamessage.data);
+      var html='<div id="messageReceive'+this.currentReceiveMessageId+'" class="messageContainer"><div class="messageBoxReceive"><p>'+message+'</p></div></div>';
+      document.getElementById('allMessages').innerHTML+=html;
+      document.getElementById('messageReceive'+this.currentReceiveMessageId).scrollIntoView();
+      this.currentReceiveMessageId+=1;
+      if(document.getElementById('chatbox').style.display==="none")
+      {
+        document.getElementById('messageLogo').style.display="none";
+        document.getElementById('messageUnreadLogo').style.display="block";
+      }
+    };
+    
+    this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage("topic",callback);
+    console.log('Message Receive Config Done')
+  }
+
   render(){
     return (
+      <div>
       <div class="videoCallBack">
-        <video id="viewVideo" class="viewVideo"></video>
-        <video id="ownVideo" class="ownVideo"></video>
-        <div id="ringing" class="middlepopup">
-          <p class="popupText">Connecting to your {this.attendee} in just a few moments</p>
-          <div style={{textAlign:"center"}}>
-            <img class="popupImageIcon" alt="ringingIcon" src={ringingLogo} onClick={this.joinMeeting}></img>
+        <div id="innerVideoCallBack" class="innerVideoCallBack">
+          <video id="viewVideo" class="viewVideo"></video>
+          <video id="ownVideo" class="ownVideo"></video>
+          <div id="ringing" class="middlepopup">
+            <p class="popupText">Connecting to your {this.attendee} in just a few moments</p>
+            <div style={{textAlign:"center"}}>
+              <img class="popupImageIcon" alt="ringingIcon" src={ringingLogo} onClick={this.joinMeeting}></img>
+            </div>
+            <p class="ringingText">Ringing...</p>
           </div>
-          <p class="ringingText">Ringing...</p>
-        </div>
-        <div id="audiocall" class="middlepopup"  style={{top:"50%", display:"none"}}>
-          <div style={{textAlign:"center"}}>
-            <img class="popupImageIcon" alt="audioCallIcon" src={audioCallLogo}></img>
+          <div id="audiocall" class="middlepopup"  style={{top:"50%", display:"none"}}>
+            <div style={{textAlign:"center"}}>
+              <img class="popupImageIcon" alt="audioCallIcon" src={audioCallLogo}></img>
+            </div>
+            <p class="popupText">Audio Call In Progress</p>
           </div>
-          <p class="popupText">Audio Call In Progress</p>
+          <div id="callEnded" class="callendpopup" style={{display:"none"}}>
+            <p class="ringingText">CALL OVERVIEW</p>
+            <p id="time" class="time">00:00</p>
+            <p class="ringingText">CALL ENDED</p><br></br>
+            <div style={{textAlign:"center"}}>
+              <img class="callEndedImageIcon" alt="callended" src={callEndedLogo}></img>
+            </div>
+          </div>
+          <audio id="audioElement" style={{display:"none"}} ref={this.audioRef}></audio>
+          <div id="videoOptions" class="videoOptions">
+            <img id="audioOn" style={{left:"25px"}} alt="muteCallIcon" src={audioOnLogo} onClick={this.muteCall}></img>
+            <img id="audioOff" style={{left:"25px", display:"none"}} alt="muteCallIcon" src={audioOffLogo} onClick={this.muteCall}></img>
+            <img id="videoOff" style={{left:"90px"}} alt="videoIcon" src={videoCallOffLogo} onClick={this.toggleVideo}></img>
+            <img id="videoOn" style={{left:"90px", display:"none"}} alt="videoIcon" src={videoCallOnLogo} onClick={this.toggleVideo}></img>
+            <img id="screenShareOff" style={{left:"155px"}} alt="videoIcon" src={shareScreenOffLogo}></img>
+            <img id="screenShareOn" style={{left:"155px", display:"none"}} alt="videoIcon" src={shareScreenOnLogo}></img>
+            <img id="messageLogo" style={{left:"220px"}} alt="messageIcon" src={messageLogo} onClick={this.toggleChat}></img>
+            <img id="messageUnreadLogo" style={{left:"220px", display:"none"}} alt="messageIcon" src={messageUnreadLogo} onClick={this.toggleChat}></img>
+            <img id="exit" style={{right:"25px"}} alt="endMeetingIcon" src={endMeetingLogo} onClick={this.endMeeting} disabled></img>
+          </div>
+          <Options />
         </div>
-        <div id="callEnded" class="callendpopup" style={{display:"none"}}>
-          <p class="ringingText">CALL OVERVIEW</p>
-          <p id="time" class="time">00:00</p>
-          <p class="ringingText">CALL ENDED</p><br></br>
-          <div style={{textAlign:"center"}}>
-            <img class="callEndedImageIcon" alt="callended" src={callEndedLogo}></img>
+      </div>
+      <div id="chatbox" class="chatbox" style={{display: "none"}}>
+        <div class="chat">
+          <span class="chatText">Chat</span>
+        </div>
+        <div id="allMessages" class="allMessages">
+          <br></br>
+          <div class="messageContainer">
+            <div class="messageBoxReceive">
+              <p>Receive oasjdofijasiodjf oiasjdiofjasiojdi ofjoaisiojfajis ioioa fjijoa jks</p>
+            </div>
+          </div>
+          <div class="messageContainer">
+            <div class="messageBoxSend">
+              <p>Sent aksjdhfk jaskj  jkasdfjkh skdjhf kdsg </p>
+            </div>
           </div>
         </div>
-        <audio id="audioElement" style={{display:"none"}} ref={this.audioRef}></audio>
-        <div id="videoOptions" class="videoOptions">
-          <img id="audioOn" style={{left:"25px"}} alt="muteCallIcon" src={audioOnLogo} onClick={this.muteCall}></img>
-          <img id="audioOff" style={{left:"25px", display:"none"}} alt="muteCallIcon" src={audioOffLogo} onClick={this.muteCall}></img>
-          <img id="videoOff" style={{left:"90px"}} alt="videoIcon" src={videoCallOffLogo} onClick={this.toggleVideo}></img>
-          <img id="videoOn" style={{left:"90px", display:"none"}} alt="videoIcon" src={videoCallOnLogo} onClick={this.toggleVideo}></img>
-          <img id="screenShareOff" style={{left:"155px"}} alt="videoIcon" src={shareScreenOffLogo}></img>
-          <img id="screenShareOn" style={{left:"155px", display:"none"}} alt="videoIcon" src={shareScreenOnLogo}></img>
-          <img id="messageLogo" style={{left:"220px"}} alt="messageIcon" src={messageLogo}></img>
-          <img id="messageUnreadLogo" style={{left:"220px", display:"none"}} alt="messageIcon" src={messageUnreadLogo}></img>
-          <img id="exit" style={{right:"25px"}} alt="endMeetingIcon" src={endMeetingLogo} onClick={this.endMeeting} disabled></img>
+        <div class="sendMessage">
+          <input id="chatMessage" placeholder="Message" class="sendMessageBox" onKeyPress={event => {if (event.key === 'Enter') {this.sendMessage()}}}></input>
+          <img id="sendMessageIcon" class="sendMessageIcon" src={sendMessageLogo} alt="sendIcon" onClick={this.sendMessage}></img>
         </div>
+      </div>
       </div>
     );
   }
