@@ -252,3 +252,16 @@
     font-style: normal;
     font-size: 15px;
 }
+
+.closeIcon{
+    position: absolute;
+    right: 15px;
+    top: 28px;
+}
+
+.closeIcon:hover{
+    position: absolute;
+    right: 15px;
+    top: 28px;
+    cursor: pointer;
+}

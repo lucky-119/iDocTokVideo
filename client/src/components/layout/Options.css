@@ -34,6 +34,19 @@
     border-radius: 11.0753px;
 }
 
+.whiteMenuOpen:hover{
+    position: relative;
+    height: 500px;
+    left: 0px;
+    top: 0px;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    box-shadow: 0px 4.4301px 4.4301px rgba(0, 0, 0, 0.25);
+    border-radius: 11.0753px;
+    cursor: pointer;
+    opacity: 0.9;
+}
+
 .orangeMenu{
     position: relative;
     height: 86px;
@@ -215,3 +228,18 @@
     line-height: 17px;
     letter-spacing: 0.02em;
 }
+
+.closeIcon{
+    position: absolute;
+    right: 15px;
+    top: 28px;
+}
+
+.closeIcon:hover{
+    position: absolute;
+    right: 15px;
+    top: 28px;
+    cursor: pointer;
+}
+
+

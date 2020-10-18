@@ -1,0 +1,226 @@
+#questionnaireBox{
+    background: #FFB259;
+    box-shadow: 0px 0px 0px 1px #FFFFFF;
+}
+
+.questionnaireTopContainer{
+    background: #FFB259;
+    box-shadow: 0px 1px 0px #FFFFFF;
+    position: relative;
+    height: 70px;
+    width: 100%;
+}
+
+.questionnaireText{
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform: translateX(-50%) translateY(-50%);
+    font-family: 'Lato';
+    font-style: normal;
+    font-size: 22px;
+    overflow: hidden;
+    color: #1E1C61;
+}
+
+#prescriptionBox{
+    box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+}
+
+.rightbox{
+    position: absolute;
+    right: 0px;
+    bottom: 1px;
+    width: 20%;
+    height: calc(100% - 2px);
+    background-color: #FFFFFF;
+    border-radius: 10px 0px 0px 10px;
+    overflow: hidden;
+}
+
+.bottomSubmit{
+    position: absolute;
+    width: 100%;
+    height: 60px;
+    bottom: 0px;
+    box-shadow: 0px 0px 0px 1px #FFFFFF;
+}
+
+.buttonSubmit{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-top: 10px;
+    background: #FFB259;
+    color: #1E1C61;
+    outline: none;
+}
+
+.buttonSubmit:hover{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    background-color: #fed8b1;
+    outline: none;
+}
+
+.questionContainer{
+    position: relative;
+    width: 100%;
+    padding-top: 10px;
+    padding-left: 20px;
+    overflow-y: scroll;
+}
+
+.questionText{
+    position: relative;
+    width: 90%;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    color: #000000;
+    letter-spacing: 0.5px;
+}
+
+.questionInput{
+    width: 90%;
+    border: 0.382829px solid #EBE1E7;
+    box-sizing: border-box;
+    border-radius: 1.53131px;
+    background: #FFB259;
+    padding: 5px;
+    font-family: Inter;
+    font-style: normal;
+    font-size: 13px;
+    outline: none;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.questionInput:hover{
+    width: 90%;
+    border: 0.382829px solid #EBE1E7;
+    box-sizing: border-box;
+    border-radius: 1.53131px;
+    background: #FFB259;
+    padding: 5px;
+    font-family: Inter;
+    font-style: normal;
+    font-size: 13px;
+    outline: none;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.bottomSave{
+    position: absolute;
+    width: 100%;
+    height: 60px;
+    bottom: 0px;
+    box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+}
+
+.buttonSave{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-top: 10px;
+    background-color: #FFFFFF;
+    outline: none;
+}
+
+.buttonSave:hover{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.insideRightBox{
+    position: relative;
+    width: calc(100% - 50px);
+    border: 1px #000000;
+    top: 25px;
+    left: 25px;
+    height: calc(100% - 185px);
+    box-shadow: 0px 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.inputText{
+    position: relative;
+    width: calc(100% - 40px);
+    height: calc(100% - 200px);
+    border: none;
+    outline: none;
+    font-size: 15px;
+    left: 10px;
+    top: 10px;
+    padding: 10px;
+    resize: none;
+    line-height: 30px;
+}
+
+.doctorDetailsContainer{
+    position: absolute;
+    width:100%;
+    bottom: 0px;
+    height: 120px;
+    box-shadow: 0px -10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.doctorDetails{
+    padding-bottom: 20px;
+    font-family: Lato;
+    padding-left: 20px;
+    font-size: 15px;
+}
+
+.insideNotesBox{
+    position: relative;
+    width: calc(100% - 50px);
+    border: 1px #000000;
+    top: 25px;
+    left: 25px;
+    height: calc(100% - 185px);
+    box-shadow: 0px 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.notesInput{
+    border: none; 
+    outline: none;
+    background: repeating-linear-gradient(
+        to bottom, transparent, transparent 34px, rgba(0, 0, 0, 0.8) 35px
+    );
+    width: calc(100% - 50px);
+    height: calc(100% - 40px);
+    line-height: 35px;
+    resize: none;
+    margin: 20px;
+    font-size: 15px;
+}

@@ -13,7 +13,10 @@ import messageLogo from '../../img/message.svg';
 import messageUnreadLogo from '../../img/messageunread.svg';
 import callEndedLogo from '../../img/callended.svg';
 import sendMessageLogo from '../../img/sendMessage.svg';
+import closeIcon from '../../img/closeIcon.svg';
 import Options from './Options';
+import Boxes from './Boxes';
+import CallEnded from './CallEnded';
 import {
   ConsoleLogger,
   DefaultDeviceController,
@@ -223,6 +226,9 @@ class VideoCall extends Component{
             this.toggleChat();
           this.enableCallEnded();
           this.showTime();
+          document.getElementById('boxes').style.display="none";
+          document.getElementById('OptionsBefore').style.display="none";
+          document.getElementById('innerVideoCallBack').style.width="100%";
           console.log('You left the session');
         } else {
           console.log('Stopped with a session status code: ', sessionStatusCode);
@@ -421,6 +427,9 @@ class VideoCall extends Component{
           this.showAudioCall();
           var d=new Date();
           this.startTime=d.getTime();
+          document.getElementById('backToDashboard').style.display="none";
+          document.getElementById('appointmentDetailsClose').style.display="block";
+          document.getElementById('appointmentDetailsOpen').style.display="none";
           console.log('Start Time'+this.startTime);
         }
       } else {
@@ -507,6 +516,7 @@ class VideoCall extends Component{
             <div style={{textAlign:"center"}}>
               <img class="callEndedImageIcon" alt="callended" src={callEndedLogo}></img>
             </div>
+            <CallEnded />
           </div>
           <audio id="audioElement" style={{display:"none"}} ref={this.audioRef}></audio>
           <div id="videoOptions" class="videoOptions">
@@ -523,9 +533,11 @@ class VideoCall extends Component{
           <Options />
         </div>
       </div>
+      <Boxes />
       <div id="chatbox" class="chatbox" style={{display: "none"}}>
         <div class="chat">
           <span class="chatText">Chat</span>
+          <img class="closeIcon" alt="closeIcon" src={closeIcon} onClick={this.toggleChat}></img>
         </div>
         <div id="allMessages" class="allMessages">
           <br></br>

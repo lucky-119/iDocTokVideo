@@ -1,6 +1,5 @@
 import React, {Fragment, Component} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import NavBar from './components/layout/NavBar'
 import VideoCall from './components/layout/VideoCall'
 
 import './App.css';
