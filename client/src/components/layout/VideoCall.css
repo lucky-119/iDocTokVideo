@@ -99,13 +99,21 @@
 }
 
 .callendpopup{
+    position: absolute;
     width:250px;
     height:200px;
-    position: relative;
-    top: 15%;
+    top: 60px;
     left: 50%;
-    margin-top: -100px;
     margin-left: -125px;
+}
+
+.callEndComplete{
+    position: relative;
+    width: 100%;
+    left:0px;
+    top:0px;
+    height: 100%;
+    overflow-y: scroll;
 }
 
 .callEndedImageIcon{
@@ -126,7 +134,7 @@
 
 .chatbox{
     position: absolute;
-    left:220px;
+    left: 155px;
     bottom: 25px;
     width: 15%;
     height: 50%;
@@ -263,5 +271,10 @@
     position: absolute;
     right: 15px;
     top: 28px;
+    cursor: pointer;
+}
+
+#initiateCall:hover{
+    opacity: 0.8;
     cursor: pointer;
 }

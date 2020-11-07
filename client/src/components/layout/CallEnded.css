@@ -1,0 +1,88 @@
+.backToDashboardEnd{
+    position: absolute;
+    left: 17px;
+    top: 18px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 0.02em;
+    text-decoration-line: underline;
+
+    color: #FFFFFF;
+}
+
+.backToDashboardEnd:hover{
+    position: absolute;
+    left: 17px;
+    top: 18px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 0.02em;
+    text-decoration-line: underline;
+
+    opacity: 0.8;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.orangeEndBox{
+    position: absolute;
+    width: 379px;
+    height: 502px;
+    max-width: 379px;
+    max-height: 502px;
+
+    background: #FFB259;
+    border-radius: 20px;
+    margin-bottom: 50px;
+    box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
+}
+
+.whiteEndBox{
+    position: absolute;
+    width: 379px;
+    height: 502px;
+    max-width: 379px;
+    max-height: 502px;
+
+    background: #FFFFFF;
+    border-radius: 20px;
+    margin-bottom: 50px;
+    box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
+}
+
+.endBoxHeading{
+    width: 60%;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 19.4249px;
+    line-height: 23px;
+    letter-spacing: 0.02em;
+
+    color: #486581;
+    text-align: center;
+    padding-top: 25px;
+    margin: auto;
+}
+
+.controlIcons{
+    position: absolute;
+    width: 100%;
+    bottom: 15px;
+    margin: auto;
+    text-align: center;
+    display: block;
+}
+
+.controlIcons > img:hover{
+    opacity: 0.8;
+    cursor: pointer;
+}

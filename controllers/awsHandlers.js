@@ -39,6 +39,38 @@ exports.indexV2 = async (event, context, callback) => {
   return response(200, 'text/html', fs.readFileSync('./indexV2.html', {encoding: 'utf8'}));
 };
 
+exports.create = async(event, context) => {
+  const query = event;
+  if (!query.title || !query.name || !query.region) {
+    return response(400, 'application/json', JSON.stringify({error: 'Need parameters: title, name, region'}));
+  }
+  // Look up the meeting by its title. If it does not exist, create the meeting.
+  let meeting = await getMeeting(query.title);
+  if (!meeting) {
+    const request = {
+      // Use a UUID for the client request token to ensure that any request retries
+      // do not create multiple meetings.
+      ClientRequestToken: uuidv4(),
+
+      // Specify the media region (where the meeting is hosted).
+      // In this case, we use the region selected by the user.
+      MediaRegion: 'us-east-1',
+
+      // Set up SQS notifications if being used
+      NotificationsConfiguration: useSqsInsteadOfEventBridge ? { SqsQueueArn: sqsQueueArn } : {},
+
+      // Any meeting ID you wish to associate with the meeting.
+      // For simplicity here, we use the meeting title.
+      ExternalMeetingId: query.title.substring(0, 64),
+    };
+    console.info('Creating new meeting: ' + JSON.stringify(request));
+    meeting = await chime.createMeeting(request).promise();
+
+    // Store the meeting in the table using the meeting title as the key.
+    await putMeeting(query.title, meeting);
+  }
+};
+
 exports.join = async(event, context) => {
   const query = event;
   if (!query.title || !query.name || !query.region) {
@@ -54,7 +86,7 @@ exports.join = async(event, context) => {
 
       // Specify the media region (where the meeting is hosted).
       // In this case, we use the region selected by the user.
-      MediaRegion: 'us-east-2',
+      MediaRegion: 'us-east-1',
 
       // Set up SQS notifications if being used
       NotificationsConfiguration: useSqsInsteadOfEventBridge ? { SqsQueueArn: sqsQueueArn } : {},

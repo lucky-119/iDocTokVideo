@@ -16,6 +16,14 @@ class NavBar extends Component{
     this.audioRef = React.createRef();
   }
 
+  componentDidMount(){
+    if(window.location.pathname==="/patient")
+    {
+      document.getElementById('prescription').style.display="none";
+      document.getElementById('notes').style.display="none";
+    }
+  }
+
   closeAll()
   {
     document.getElementById("questionnaireBox").style.display="none";

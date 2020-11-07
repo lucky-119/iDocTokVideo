@@ -7,8 +7,6 @@ import audioOffLogo from '../../img/audiooff.svg';
 import videoCallOffLogo from '../../img/videooff.svg';
 import videoCallOnLogo from '../../img/videoon.svg';
 import endMeetingLogo from '../../img/exit.svg';
-import shareScreenOffLogo from '../../img/sharescreenoff.svg';
-import shareScreenOnLogo from '../../img/sharescreenon.svg';
 import messageLogo from '../../img/message.svg';
 import messageUnreadLogo from '../../img/messageunread.svg';
 import callEndedLogo from '../../img/callended.svg';
@@ -17,6 +15,7 @@ import closeIcon from '../../img/closeIcon.svg';
 import Options from './Options';
 import Boxes from './Boxes';
 import CallEnded from './CallEnded';
+import ringingSound from "../../mp3/ringing.mp4";
 import {
   ConsoleLogger,
   DefaultDeviceController,
@@ -53,6 +52,7 @@ class VideoCall extends Component{
     this.toggleChat = this.toggleChat.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.receiveMessageObserver = this.receiveMessageObserver.bind(this);
+    this.startCall = this.startCall.bind(this);
     this.audioRef = React.createRef();
     this.meetingSession="";
     this.videoOn=false;
@@ -61,14 +61,21 @@ class VideoCall extends Component{
     this.endTime="00";
     this.currentSendMessageId=0;
     this.currentReceiveMessageId=0;
+    this.chatData=[];
   }
 
-  //Run when component opens up/is mounted
+  //Runs just before component is mounted
   componentWillMount(){
     if(window.location.pathname==="/doctor")
       this.attendee="patient";
     else if(window.location.pathname==="/patient")
       this.attendee="doctor"
+  }
+
+  //Runs once component is mounted
+  componentDidMount(){
+    document.getElementById('ringingAudio').playbackRate=0.70;
+    document.getElementById('ringingAudio').loop=true;
   }
 
   //Send API calls to create/join meeting
@@ -182,6 +189,7 @@ class VideoCall extends Component{
   {
     document.getElementById("callEnded").style.display = "block";
   }
+  
   //Observer when video starts
   addVideoStartObserver()
   {
@@ -229,6 +237,18 @@ class VideoCall extends Component{
           document.getElementById('boxes').style.display="none";
           document.getElementById('OptionsBefore').style.display="none";
           document.getElementById('innerVideoCallBack').style.width="100%";
+          fetch('/doctor/meeting/chat',{
+            method: 'post', 
+            headers: {
+              'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({chat: this.chatData})
+          }).then(res=>res.json()).then((result)=>{
+            if(result.status===200)
+              console.log("Chat Updated");
+            else
+              console.log('Error while updating chat');
+          });
           console.log('You left the session');
         } else {
           console.log('Stopped with a session status code: ', sessionStatusCode);
@@ -245,10 +265,22 @@ class VideoCall extends Component{
   showTime()
   {
     var time=this.endTime-this.startTime;
+    fetch('/doctor/meeting/time',{
+      method: 'post', 
+      headers: {
+        'Content-Type': 'application/json'
+      }, 
+      body: JSON.stringify({time: time})
+    }).then(res=>res.json()).then((result)=>{
+      if(result.status===200)
+        console.log("Time Updated");
+      else
+        console.log('Error while updating time');
+    });
     var min=Math.floor(time/60000);
     if(min<10)
       min="0"+min.toString();
-    var sec=Math.round(time/1000)-(min*60);
+    var sec=Math.floor(time/1000)-(min*60);
     if(sec<10)
       sec="0"+sec.toString();
     document.getElementById('time').innerHTML=min+":"+sec;
@@ -256,6 +288,7 @@ class VideoCall extends Component{
   //Stops Video and calls API to end meeting
   async endMeeting()
   {
+    document.getElementById('ringingAudio').pause();
     this.endMeetingObserver();
     await this.meetingSession.audioVideo.chooseVideoInputDevice(null);
     fetch('/doctor/meeting/Prod/end?title="test2"').then(res=>res.json()).then((result)=>{
@@ -424,6 +457,7 @@ class VideoCall extends Component{
         if(attendeePresenceSet.size===2)
         {
           this.removeRinging();
+          document.getElementById('ringingAudio').pause();
           this.showAudioCall();
           var d=new Date();
           this.startTime=d.getTime();
@@ -466,6 +500,17 @@ class VideoCall extends Component{
       document.getElementById('messageSend'+this.currentSendMessageId).scrollIntoView();
       this.currentSendMessageId+=1;
       this.meetingSession.audioVideo.realtimeSendDataMessage("topic",message);
+      var dict={};
+      if(window.location.pathname==="/doctor")
+      {
+        dict["Doctor"]=message;
+        this.chatData.push(dict);
+      }
+      else if(window.location.pathname==="/patient")
+      {
+        dict["Patient"]=message;
+        this.chatData.push(dict);
+      }
     }
   }
 
@@ -483,10 +528,29 @@ class VideoCall extends Component{
         document.getElementById('messageLogo').style.display="none";
         document.getElementById('messageUnreadLogo').style.display="block";
       }
+      var dict={};
+      if(window.location.pathname==="/doctor")
+      {
+        dict["Doctor"]=message;
+        this.chatData.push(dict);
+      }
+      else if(window.location.pathname==="/patient")
+      {
+        dict["Patient"]=message;
+        this.chatData.push(dict);
+      }
     };
     
     this.meetingSession.audioVideo.realtimeSubscribeToReceiveDataMessage("topic",callback);
     console.log('Message Receive Config Done')
+  }
+
+  startCall()
+  {
+    this.joinMeeting();
+    document.getElementById('ringingAudio').play();
+    document.getElementById('initiateCall').style.display="none";
+    document.getElementById('ringing').style.display="block";
   }
 
   render(){
@@ -496,12 +560,20 @@ class VideoCall extends Component{
         <div id="innerVideoCallBack" class="innerVideoCallBack">
           <video id="viewVideo" class="viewVideo"></video>
           <video id="ownVideo" class="ownVideo"></video>
-          <div id="ringing" class="middlepopup">
+          <audio id="ringingAudio" src={ringingSound} loop></audio>
+          <div id="initiateCall" class="middlepopup" onClick={this.startCall}>
+          <p class="popupText">Click here to connect <br></br>with your {this.attendee}</p>
+            <div style={{textAlign:"center"}}>
+              <img class="popupImageIcon" alt="ringingIcon" src={ringingLogo} style={{transform:"rotate(135deg)"}}></img>
+            </div>
+            <p class="ringingText">CALL YOUR {this.attendee}</p>
+          </div>
+          <div id="ringing" class="middlepopup" style={{display:"none"}}>
             <p class="popupText">Connecting to your {this.attendee} in just a few moments</p>
             <div style={{textAlign:"center"}}>
-              <img class="popupImageIcon" alt="ringingIcon" src={ringingLogo} onClick={this.joinMeeting}></img>
+              <img class="popupImageIcon" alt="ringingIcon" src={ringingLogo}></img>
             </div>
-            <p class="ringingText">Ringing...</p>
+            <p class="ringingText">RINGING...</p>
           </div>
           <div id="audiocall" class="middlepopup"  style={{top:"50%", display:"none"}}>
             <div style={{textAlign:"center"}}>
@@ -509,12 +581,14 @@ class VideoCall extends Component{
             </div>
             <p class="popupText">Audio Call In Progress</p>
           </div>
-          <div id="callEnded" class="callendpopup" style={{display:"none"}}>
-            <p class="ringingText">CALL OVERVIEW</p>
-            <p id="time" class="time">00:00</p>
-            <p class="ringingText">CALL ENDED</p><br></br>
-            <div style={{textAlign:"center"}}>
-              <img class="callEndedImageIcon" alt="callended" src={callEndedLogo}></img>
+          <div id="callEnded" class="callEndComplete" style={{display:"none"}}>
+            <div class="callendpopup">
+              <p class="ringingText">CALL OVERVIEW</p>
+              <p id="time" class="time">00:00</p>
+              <p class="ringingText">CALL ENDED</p><br></br>
+              <div style={{textAlign:"center"}}>
+                <img class="callEndedImageIcon" alt="callended" src={callEndedLogo}></img>
+              </div>
             </div>
             <CallEnded />
           </div>
@@ -524,10 +598,8 @@ class VideoCall extends Component{
             <img id="audioOff" style={{left:"25px", display:"none"}} alt="muteCallIcon" src={audioOffLogo} onClick={this.muteCall}></img>
             <img id="videoOff" style={{left:"90px"}} alt="videoIcon" src={videoCallOffLogo} onClick={this.toggleVideo}></img>
             <img id="videoOn" style={{left:"90px", display:"none"}} alt="videoIcon" src={videoCallOnLogo} onClick={this.toggleVideo}></img>
-            <img id="screenShareOff" style={{left:"155px"}} alt="videoIcon" src={shareScreenOffLogo}></img>
-            <img id="screenShareOn" style={{left:"155px", display:"none"}} alt="videoIcon" src={shareScreenOnLogo}></img>
-            <img id="messageLogo" style={{left:"220px"}} alt="messageIcon" src={messageLogo} onClick={this.toggleChat}></img>
-            <img id="messageUnreadLogo" style={{left:"220px", display:"none"}} alt="messageIcon" src={messageUnreadLogo} onClick={this.toggleChat}></img>
+            <img id="messageLogo" style={{left:"155px"}} alt="messageIcon" src={messageLogo} onClick={this.toggleChat}></img>
+            <img id="messageUnreadLogo" style={{left:"155px", display:"none"}} alt="messageIcon" src={messageUnreadLogo} onClick={this.toggleChat}></img>
             <img id="exit" style={{right:"25px"}} alt="endMeetingIcon" src={endMeetingLogo} onClick={this.endMeeting} disabled></img>
           </div>
           <Options />
@@ -541,16 +613,6 @@ class VideoCall extends Component{
         </div>
         <div id="allMessages" class="allMessages">
           <br></br>
-          <div class="messageContainer">
-            <div class="messageBoxReceive">
-              <p>Receive oasjdofijasiodjf oiasjdiofjasiojdi ofjoaisiojfajis ioioa fjijoa jks</p>
-            </div>
-          </div>
-          <div class="messageContainer">
-            <div class="messageBoxSend">
-              <p>Sent aksjdhfk jaskj  jkasdfjkh skdjhf kdsg </p>
-            </div>
-          </div>
         </div>
         <div class="sendMessage">
           <input id="chatMessage" placeholder="Message" class="sendMessageBox" onKeyPress={event => {if (event.key === 'Enter') {this.sendMessage()}}}></input>
