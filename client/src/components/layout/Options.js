@@ -100,13 +100,13 @@ class NavBar extends Component{
                 <p class="menuHeading">Back to Dashboard</p>
               </div>
           </div>
-          <div id="appointmentDetailsClose" class="whiteMenu" style={{display: "none"}} onClick={this.toggleAppointment}>
+          <div id="appointmentDetailsClose" class="whiteMenu" onClick={this.toggleAppointment}>
             <div class="centerHeading">
               <p class="menuHeading">Appointment Details</p>
             </div>
             <img src={downIcon} alt="downIcon" class="downLeftIcon"></img>
           </div> 
-          <div id="appointmentDetailsOpen" class="whiteMenuOpen" onClick={this.toggleAppointment}>
+          <div id="appointmentDetailsOpen" class="whiteMenuOpen"  style={{display: "none"}} onClick={this.toggleAppointment}>
             <div class="centerHeading">
               <p class="menuHeading">Appointment Details</p>
             </div>

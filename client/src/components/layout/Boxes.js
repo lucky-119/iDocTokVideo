@@ -11,18 +11,54 @@ class Boxes extends Component{
     this.updatePrescription = this.updatePrescription.bind(this);
     this.updateNotes = this.updateNotes.bind(this);
     this.submitQuestionnaire = this.submitQuestionnaire.bind(this);
+    this.getQuestions = this.getQuestions.bind(this);
+  }
+
+  componentWillMount()
+  {
+    this.getQuestions();
+  }
+
+  getQuestions()
+  {
+    if(window.location.pathname==="/doctor")
+    {
+      fetch('/meeting/doctor/getQuestions',{method: 'post'}).then(res=>res.json()).then((result)=>{
+        for(var i=0;i<result.length;i++)
+        {
+          var html='<div class="questionContainer"><div class="questionText"><p>'+result[i].question+'</p></div><select class="questionInput">';
+          for(var j=0;j<result[i].options.length;j++)
+            html+='<option value='+result[i].options[j]+'>'+result[i].options[j]+'</option>';
+          html+='</select></div>';
+          document.getElementById('allQuestions').innerHTML+=html;
+        }
+      });
+    }
+    else if(window.location.pathname==="/patient")
+    {
+      fetch('/meeting/patient/getQuestions',{method: 'post'}).then(res=>res.json()).then((result)=>{
+        for(var i=0;i<result.length;i++)
+        {
+          var html='<div class="questionContainer"><div class="questionText"><p>'+result[i].question+'</p></div><select class="questionInput">';
+          for(var j=0;j<result[i].options.length;j++)
+            html+='<option value='+result[i].options[j]+'>'+result[i].options[j]+'</option>';
+          html+='</select></div>';
+          document.getElementById('allQuestions').innerHTML+=html;
+        }
+      });
+    }
   }
 
   updatePrescription()
   {
     var prescriptionData = document.getElementById('prescriptionInput').value;
     console.log(prescriptionData);
-    fetch('/doctor/meeting/prescription',{
+    fetch('/meeting/doctor/prescription',{
       method: 'post', 
       headers: {
         'Content-Type': 'application/json'
       }, 
-      body: JSON.stringify({prescription: prescriptionData})
+      body: JSON.stringify({"prescription": prescriptionData,"appointmentId":"test2"})
     }).then(res=>res.json()).then((result)=>{
       if(result.status===200)
         console.log("Prescription Updated");
@@ -35,12 +71,12 @@ class Boxes extends Component{
   {
     var notesData = document.getElementById('notesInput').value;
     console.log(notesData);
-    fetch('/doctor/meeting/notes',{
+    fetch('/meeting/doctor/notes',{
       method: 'post', 
       headers: {
         'Content-Type': 'application/json'
       }, 
-      body: JSON.stringify({notes: notesData})
+      body: JSON.stringify({"notes": notesData,"appointmentId":"test2"})
     }).then(res=>res.json()).then((result)=>{
       if(result.status===200)
         console.log("Notes Updated");
@@ -52,20 +88,20 @@ class Boxes extends Component{
   submitQuestionnaire()
   {
     var allQuestions = document.getElementById('allQuestions').childNodes;
-    var noOfQuestions = allQuestions.length;
+    var noOfQuestions = allQuestions.length-1;
     console.log(allQuestions)
     console.log(noOfQuestions)
     var questionData={}
-    for(var i=0;i<(noOfQuestions-1);i++)
+    for(var i=1;i<(noOfQuestions+1);i++)
       questionData[allQuestions[i].firstChild.innerText]=allQuestions[i].lastChild.value;
     if(window.location.pathname==="/doctor")
     {
-      fetch('/doctor/meeting/questionnaire',{
+      fetch('/meeting/doctor/questionnaire',{
         method: 'post', 
         headers: {
           'Content-Type': 'application/json'
         }, 
-        body: JSON.stringify({questionnaire: questionData})
+        body: JSON.stringify({"questionnaire": questionData,"appointmentId":"test2"})
       }).then(res=>res.json()).then((result)=>{
         if(result.status===200)
           console.log("Questionnaire Submitted");
@@ -75,12 +111,12 @@ class Boxes extends Component{
     }
     else if(window.location.pathname==="/patient")
     {
-      fetch('/patient/meeting/questionnaire',{
+      fetch('/meeting/patient/questionnaire',{
         method: 'post', 
         headers: {
           'Content-Type': 'application/json'
         }, 
-        body: JSON.stringify({questionnaire: questionData})
+        body: JSON.stringify({"questionnaire": questionData,"appointmentId":"test2"})
       }).then(res=>res.json()).then((result)=>{
         if(result.status===200)
           console.log("Questionnaire Submitted");
@@ -101,26 +137,6 @@ class Boxes extends Component{
             <span class="questionnaireText">Questionnaire</span>
           </div>
           <div id="allQuestions" class="allMessages">
-            <div class="questionContainer">
-              <div class="questionText">
-                <p>1) When did you last see a doctor? Was it within two weeks prior? If yes, provide details. </p>
-              </div>
-              <select class="questionInput">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="NA">Don't Know</option>
-              </select>
-            </div>
-            <div class="questionContainer">
-              <div class="questionText">
-                <p>2) Have you ever had diabetes?</p>
-              </div>
-              <select class="questionInput">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="NA">Don't Know</option>
-              </select>
-            </div>
             <br></br>
           </div>
           <div class="bottomSubmit">

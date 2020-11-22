@@ -82,13 +82,13 @@ class VideoCall extends Component{
   joinMeeting()
   {
     if(window.location.pathname==="/doctor")
-    fetch('/doctor/meeting/Prod/join?title="test2"&name="lakshay"&region="us-east-1"').then(res=>res.json()).then((result)=>{
+    fetch('/meeting/Prod/join?title="test2"&name="lakshay"&region="us-east-1"').then(res=>res.json()).then((result)=>{
       console.log(result);
       console.log("Join done");
       this.createMeetingSession(result);
     });
     else if(window.location.pathname==="/patient")
-    fetch('/doctor/meeting/Prod/join?title="test2"&name="lakshay2"&region="us-east-1"').then(res=>res.json()).then((result)=>{
+    fetch('/meeting/Prod/join?title="test2"&name="lakshay2"&region="us-east-1"').then(res=>res.json()).then((result)=>{
       console.log(result);
       console.log("Join done");
       this.createMeetingSession(result);
@@ -237,18 +237,28 @@ class VideoCall extends Component{
           document.getElementById('boxes').style.display="none";
           document.getElementById('OptionsBefore').style.display="none";
           document.getElementById('innerVideoCallBack').style.width="100%";
-          fetch('/doctor/meeting/chat',{
+          console.log('CHATTTT',this.chatdata);
+          fetch('/meeting/doctor/chat',{
             method: 'post', 
             headers: {
               'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({chat: this.chatData})
+            body: JSON.stringify({chat: this.chatData,"appointmentId":"test2"})
           }).then(res=>res.json()).then((result)=>{
             if(result.status===200)
               console.log("Chat Updated");
             else
               console.log('Error while updating chat');
           });
+          fetch('/meeting/pdf/createMeetingPdfs',{
+            method: 'post', 
+            headers: {
+              'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({"appointmentId": "test2"})
+          }).then(res=>res.json()).then((result)=>{
+            console.log(result);
+          })
           console.log('You left the session');
         } else {
           console.log('Stopped with a session status code: ', sessionStatusCode);
@@ -265,12 +275,12 @@ class VideoCall extends Component{
   showTime()
   {
     var time=this.endTime-this.startTime;
-    fetch('/doctor/meeting/time',{
+    fetch('/meeting/doctor/time',{
       method: 'post', 
       headers: {
         'Content-Type': 'application/json'
       }, 
-      body: JSON.stringify({time: time})
+      body: JSON.stringify({time: time,"appointmentId":"test2"})
     }).then(res=>res.json()).then((result)=>{
       if(result.status===200)
         console.log("Time Updated");
@@ -291,7 +301,7 @@ class VideoCall extends Component{
     document.getElementById('ringingAudio').pause();
     this.endMeetingObserver();
     await this.meetingSession.audioVideo.chooseVideoInputDevice(null);
-    fetch('/doctor/meeting/Prod/end?title="test2"').then(res=>res.json()).then((result)=>{
+    fetch('/meeting/Prod/end?title="test2"').then(res=>res.json()).then((result)=>{
       console.log(result);
       console.log("End done");
     })
@@ -531,12 +541,12 @@ class VideoCall extends Component{
       var dict={};
       if(window.location.pathname==="/doctor")
       {
-        dict["Doctor"]=message;
+        dict["Patient"]=message;
         this.chatData.push(dict);
       }
       else if(window.location.pathname==="/patient")
       {
-        dict["Patient"]=message;
+        dict["Doctor"]=message;
         this.chatData.push(dict);
       }
     };
