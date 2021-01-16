@@ -1,6 +1,7 @@
 const express = require('express')
 var bodyParser = require('body-parser')
 const AWS = require('aws-sdk');
+const path = require('path');
 
 if (!AWS.config.region) {
     AWS.config.update({
@@ -23,7 +24,7 @@ app.use('/meeting',meeting);
 
 app.use(express.static("client/build"));
 
-app.get("", (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
 });
 
