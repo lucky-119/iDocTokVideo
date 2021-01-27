@@ -606,10 +606,10 @@ class VideoCall extends Component{
           <div id="videoOptions" class="videoOptions">
             <img id="audioOn" style={{left:"25px"}} alt="muteCallIcon" src={audioOnLogo} onClick={this.muteCall}></img>
             <img id="audioOff" style={{left:"25px", display:"none"}} alt="muteCallIcon" src={audioOffLogo} onClick={this.muteCall}></img>
-            <img id="videoOff" style={{left:"90px"}} alt="videoIcon" src={videoCallOffLogo} onClick={this.toggleVideo}></img>
-            <img id="videoOn" style={{left:"90px", display:"none"}} alt="videoIcon" src={videoCallOnLogo} onClick={this.toggleVideo}></img>
-            <img id="messageLogo" style={{left:"155px"}} alt="messageIcon" src={messageLogo} onClick={this.toggleChat}></img>
-            <img id="messageUnreadLogo" style={{left:"155px", display:"none"}} alt="messageIcon" src={messageUnreadLogo} onClick={this.toggleChat}></img>
+            <img id="videoOff" style={{left:"85px"}} alt="videoIcon" src={videoCallOffLogo} onClick={this.toggleVideo}></img>
+            <img id="videoOn" style={{left:"85px", display:"none"}} alt="videoIcon" src={videoCallOnLogo} onClick={this.toggleVideo}></img>
+            <img id="messageLogo" style={{left:"145px"}} alt="messageIcon" src={messageLogo} onClick={this.toggleChat}></img>
+            <img id="messageUnreadLogo" style={{left:"145px", display:"none"}} alt="messageIcon" src={messageUnreadLogo} onClick={this.toggleChat}></img>
             <img id="exit" style={{right:"25px"}} alt="endMeetingIcon" src={endMeetingLogo} onClick={this.endMeeting} disabled></img>
           </div>
           <Options />

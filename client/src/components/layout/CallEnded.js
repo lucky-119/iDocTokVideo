@@ -116,7 +116,7 @@ class CallEnded extends Component{
             <img src={downloadIcon} alt="downloadicon"></img>
           </div>
         </div>
-        <div class="whiteEndBox" style={{left:"50%",top:"523px",marginLeft:"-189.5px"}}>
+        <div class="whiteEndBox" style={{left:"50%",top:"523px",marginLeft:"-150px"}}>
           <p class="endBoxHeading">NOTES</p>
           <div class="controlIcons">
             <img src={viewIcon} alt="viewicon" onClick={() => this.getNotes("view")}></img>
