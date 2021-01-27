@@ -134,7 +134,7 @@
 
 .chatbox{
     position: absolute;
-    left: 155px;
+    left: 145px;
     bottom: 25px;
     width: 15%;
     height: 50%;
@@ -237,7 +237,7 @@
 
 .messageBoxReceive{
     position: relative;
-    width: 50%;
+    width: 45%;
     background-color: #cccccc;
     border-radius: 10px;
     left: 5%;
@@ -247,7 +247,7 @@
 
 .messageBoxSend{
     position: relative;
-    width: 50%;
+    width: 45%;
     background-color: #cccccc;
     border-radius: 10px;
     left: 35%;
