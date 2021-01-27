@@ -23,6 +23,7 @@
     "express-validator": "^6.6.1",
     "file-saver": "^2.0.2",
     "pdfkit": "^0.11.0",
+    "react-device-detect": "^1.15.0",
     "react-pdf": "^5.0.0",
     "request": "^2.88.2"
   },

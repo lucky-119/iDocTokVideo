@@ -95,7 +95,7 @@
 }
 
 .questionInput{
-    width: 90%;
+    width: 85%;
     border: 0.382829px solid #EBE1E7;
     box-sizing: border-box;
     border-radius: 1.53131px;
@@ -110,7 +110,7 @@
 }
 
 .questionInput:hover{
-    width: 90%;
+    width: 85%;
     border: 0.382829px solid #EBE1E7;
     box-sizing: border-box;
     border-radius: 1.53131px;
