@@ -9,7 +9,7 @@ class App extends Component {
   render()
   {
     if (isMobile) {
-      return (<div> This content is unavailable on mobile</div>);
+      return (<div> This content is unavailable on mobile. Please open this on a laptop/desktop.</div>);
     }
     else
     {
