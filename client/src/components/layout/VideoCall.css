@@ -231,7 +231,7 @@
     width: 100%;
     left:0px;
     top:0px;
-    height: calc(100% - 131px);
+    height: calc(100% - 105px);
     overflow-y: scroll;
 }
 
@@ -283,7 +283,7 @@
 .closeIconChat:hover{
     position: absolute;
     right: 15px;
-    top: 18.5px;
+    top: 20.5px;
     cursor: pointer;
 }
 

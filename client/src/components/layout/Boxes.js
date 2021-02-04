@@ -136,7 +136,7 @@ class Boxes extends Component{
           <div class="questionnaireTopContainer">
             <span class="questionnaireText">Questionnaire</span>
           </div>
-          <div id="allQuestions" class="allMessages">
+          <div id="allQuestions" class="allQuestions">
             <br></br>
           </div>
           <div class="bottomSubmit">
