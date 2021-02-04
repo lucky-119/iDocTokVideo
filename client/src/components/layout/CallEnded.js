@@ -102,14 +102,14 @@ class CallEnded extends Component{
     return (
     <div class="endData">
         <span class="backToDashboardEnd">Back To Dashboard</span>
-        <div class="whiteEndBox" style={{left:"87px",top:"74px"}}>
+        <div class="whiteEndBox" style={{left:"60px",top:"74px"}}>
           <p class="endBoxHeading">PRESCRIPTION</p>
           <div class="controlIcons">
             <img src={viewIcon} alt="viewicon" onClick={() => this.getPrescription("view")}></img>
             <img src={downloadIcon} alt="downloadicon" onClick={() => this.getPrescription("download")}></img>
           </div>
         </div>
-        <div class="orangeEndBox" style={{right:"87px",top:"74px"}}>
+        <div class="orangeEndBox" style={{right:"60px",top:"74px"}}>
           <p class="endBoxHeading">APPOINTMENT AND PATIENT DETAILS</p>
           <div class="controlIcons">
             <img src={viewIcon} alt="viewicon"></img>
@@ -123,14 +123,14 @@ class CallEnded extends Component{
             <img src={downloadIcon} alt="downloadicon" onClick={() => this.getNotes("download")}></img>
           </div>
         </div>
-        <div class="orangeEndBox" style={{left:"87px",top:"648px"}}>
+        <div class="orangeEndBox" style={{left:"60px",top:"648px"}}>
           <p class="endBoxHeading">CHAT</p>
           <div class="controlIcons">
             <img src={viewIcon} alt="viewicon" onClick={() => this.getChat("view")}></img>
             <img src={downloadIcon} alt="downloadicon" onClick={() => this.getChat("download")}></img>
           </div>
         </div>
-        <div class="whiteEndBox" style={{right:"87px",top:"648px"}}>
+        <div class="whiteEndBox" style={{right:"60px",top:"648px"}}>
           <p class="endBoxHeading">INVOICE</p>
           <div class="controlIcons">
             <img src={viewIcon} alt="viewicon"></img>

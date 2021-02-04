@@ -619,7 +619,7 @@ class VideoCall extends Component{
       <div id="chatbox" class="chatbox" style={{display: "none"}}>
         <div class="chat">
           <span class="chatText">Chat</span>
-          <img class="closeIcon" alt="closeIcon" src={closeIcon} onClick={this.toggleChat}></img>
+          <img class="closeIconChat" alt="closeIcon" src={closeIcon} onClick={this.toggleChat}></img>
         </div>
         <div id="allMessages" class="allMessages">
           <br></br>

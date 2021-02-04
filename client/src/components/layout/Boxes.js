@@ -145,8 +145,8 @@ class Boxes extends Component{
         </div>
 
         <div id="prescriptionBox" class="rightbox" style={{display:"none"}}>
-        <div class="chat">
-          <span class="chatText">Prescription</span>
+        <div class="rightWhiteBoxContainer">
+          <span class="rightWhiteBoxText">Prescription</span>
         </div>
         <div class="insideRightBox">
         <textarea id="prescriptionInput" class="inputText" placeholder="Type your prescription here..."></textarea>
@@ -164,10 +164,10 @@ class Boxes extends Component{
       </div>
 
       <div id="notesBox" class="rightbox" style={{display:"none"}}>
-        <div class="chat">
-          <span class="chatText">Notes</span>
+        <div class="rightWhiteBoxContainer">
+          <span class="rightWhiteBoxText">Notes</span>
         </div>
-        <div class="insideNotesBox">
+        <div class="insideRightBox">
           <textarea id="notesInput" class="notesInput" placeholder="Write your notes here..."></textarea>
         </div>
         <div class="bottomSave">
