@@ -100,7 +100,7 @@
 
 .questionText{
     position: relative;
-    width: calc(100%-40px);
+    width: calc(100%-20px);
     font-family: Lato;
     font-style: normal;
     font-weight: 600;
@@ -110,7 +110,7 @@
 }
 
 .questionInput{
-    width: calc(100%-40px);
+    width: calc(100%-20px);
     border: 0.382829px solid #EBE1E7;
     box-sizing: border-box;
     border-radius: 1.53131px;
