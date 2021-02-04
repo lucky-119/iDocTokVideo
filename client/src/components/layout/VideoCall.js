@@ -76,6 +76,7 @@ class VideoCall extends Component{
   componentDidMount(){
     document.getElementById('ringingAudio').playbackRate=0.70;
     document.getElementById('ringingAudio').loop=true;
+     
   }
 
   //Send API calls to create/join meeting
