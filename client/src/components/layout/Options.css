@@ -111,26 +111,25 @@
     margin: auto;
 }
 
-.whiteMenu > .headingContainer > .centerHeading > .menuHeading, .whiteMenu > .centerHeading > .menuHeading{
-    font-size: 12px;
+.whiteMenu > .headingContainer > .centerHeading > .menuHeading, .whiteMenu > .centerHeading > .menuHeading{    font-size: 13px;
     text-transform: uppercase;
     color: #486581;
 }
 
 .whiteMenuOpen > .headingContainer > .centerHeading > .menuHeading, .whiteMenuOpen > .centerHeading > .menuHeading{
     top: 20%;
-    font-size: 12px;
+    font-size: 13px;
     text-transform: uppercase;
     color: #486581;
 }
 
 .orangeMenu > .centerHeading > .menuHeading{
-    font-size: 13px;
+    font-size: 14px;
     color: #1E1C61;
 }
 
 .orangeMenuSmall > .centerHeading > .menuHeading{
-    font-size: 13px;
+    font-size: 14px;
     color: #1E1C61;
 }
 
@@ -139,7 +138,7 @@
     font-family: Lato;
     font-style: normal;
     font-weight: bold;
-    font-size: 10px;
+    font-size: 10.5px;
     letter-spacing: 0.02em;
     color: #FFFFFF;
     margin: auto;
