@@ -1,20 +1,20 @@
 .leftMenu{
     position: absolute;
-    width: 250px;
+    width: 240px;
     left: 15px;
     top: 15px;
 }
 
 .rightMenu{
     position: absolute;
-    width: 250px;
+    width: 220px;
     right: 0px;
     top: 15px;
 }
 
 .whiteMenu{
     position: relative;
-    height: 70px;
+    height: 60px;
     background: #FFFFFF;
     box-sizing: border-box;
     box-shadow: 0px 4.4301px 4.4301px rgba(0, 0, 0, 0.25);
@@ -25,7 +25,7 @@
 
 .whiteMenuOpen{
     position: relative;
-    height: 350px;
+    height: 310px;
     left: 0px;
     top: 0px;
     background: #FFFFFF;
@@ -36,7 +36,7 @@
 
 .whiteMenuOpen:hover{
     position: relative;
-    height: 350px;
+    height: 310px;
     left: 0px;
     top: 0px;
     background: #FFFFFF;
@@ -47,9 +47,14 @@
     opacity: 0.9;
 }
 
+.headingContainer{
+    position: relative;
+    height: 60px;
+}
+
 .orangeMenu{
     position: relative;
-    height: 70px;
+    height: 60px;
     background: #FFB259;
     box-sizing: border-box;
     box-shadow: 0px 4.4301px 4.4301px rgba(0, 0, 0, 0.25);
@@ -106,13 +111,13 @@
     margin: auto;
 }
 
-.whiteMenu > .centerHeading > .menuHeading{
+.whiteMenu > .headingContainer > .centerHeading > .menuHeading, .whiteMenu > .centerHeading > .menuHeading{
     font-size: 12px;
     text-transform: uppercase;
     color: #486581;
 }
 
-.whiteMenuOpen > .centerHeading > .menuHeading{
+.whiteMenuOpen > .headingContainer > .centerHeading > .menuHeading, .whiteMenuOpen > .centerHeading > .menuHeading{
     top: 20%;
     font-size: 12px;
     text-transform: uppercase;
@@ -143,15 +148,19 @@
 
 .downLeftIcon{
     position: absolute;
-    right: 6.25px;
-    top: 18.5px;
+    right: 4px;
+    top: 16px;
+    width: 30px;
+    height: 30px;
 }
 
 .downRightIcon{
     position: absolute;
     left: 6.25px;
-    top: 18.5px;
+    top: 16.5px;
     transform: rotateZ(90deg);
+    width: 30px;
+    height: 30px;
 }
 
 .menuBack{
@@ -214,7 +223,7 @@
     font-style: normal;
     font-weight: 500;
     font-size: 11px;
-    line-height: 10px;
+    line-height: 5px;
     letter-spacing: 0.02em;
 
     color: #486581;

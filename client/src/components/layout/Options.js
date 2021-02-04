@@ -101,19 +101,20 @@ class NavBar extends Component{
               </div>
           </div>
           <div id="appointmentDetailsClose" class="whiteMenu" onClick={this.toggleAppointment}>
-            <div class="centerHeading">
-              <p class="menuHeading">Appointment Details</p>
+            <div class="headingContainer">
+              <div class="centerHeading">
+                <p class="menuHeading">Appointment Details</p>
+              </div>
+              <img src={downIcon} alt="downIcon" class="downLeftIcon"></img>
             </div>
-            <img src={downIcon} alt="downIcon" class="downLeftIcon"></img>
           </div> 
           <div id="appointmentDetailsOpen" class="whiteMenuOpen"  style={{display: "none"}} onClick={this.toggleAppointment}>
-            <div class="centerHeading">
-              <p class="menuHeading">Appointment Details</p>
+            <div class="headingContainer">
+              <div class="centerHeading">
+                <p class="menuHeading">Appointment Details</p>
+              </div>
+              <img src={downIcon} alt="downIcon" class="downLeftIcon" style={{transform: "rotate(180deg)"}}></img>
             </div>
-            <br></br>
-            <br></br>
-            <br></br>
-            <img src={downIcon} alt="downIcon" class="downLeftIcon" style={{transform: "rotate(180deg)"}}></img>
             <div class="openDetailsContainer">
               <div class="detailTopic">
                 <p class="detailHeading">Doctor's Name</p>
@@ -139,7 +140,7 @@ class NavBar extends Component{
         <div class="rightMenu">
           <div id="questionnaire" class="orangeMenu" onClick={this.toggleQuestionnaire}>
             <div class="centerHeading">
-              <p class="menuHeading">Patient Details</p>
+              <p class="menuHeading">Questionnaire</p>
               <p class="menuOptional">(2-3 Minutes)</p>
             </div>
             <img src={downIcon} alt="downIcon" class="downRightIcon"></img>
